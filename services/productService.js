@@ -1,11 +1,11 @@
-// CHECK NAMES/PARAMETERS
-
+// const uniqid = require('uniqid'); // библиотека за генериране на уникално ID, няма да е част от exam package, защото mongo генерира свои id
+const Cube = require('../models/cube'); // модел за клас Cube - отпада от exam package заради mongo schema
 const Accessory = require('../models/accessory');
 
 async function getAll(query){
-    // let products = await Cube.find({}).lean(); ОТПАДА - НЯМА ДА СЕ КАЗВА ТАКА МОДЕЛЪТ
-
-
+    // let products = productData.getAll()
+    // let products = Cube.getAll();
+    let products = await Cube.find({}).lean();
     if(query.search){
         products = products.filter(x => x.name.toLowerCase().includes(query.search))
     }
@@ -20,9 +20,9 @@ async function getAll(query){
 async function getOne(id){
     return Cube.findById(id).lean();
 }
- 
-function createCube(data){
-       let cube = new Cube({...data, creator: userId});
+function createCube(data, userId){
+    let cube = new Cube({...data, creator: userId});
+
     return cube.save()
 }
 async function attachAccessory(productId, accessoryId){
@@ -35,11 +35,11 @@ function getOneWithAccessories(id){
     return Cube.findById(id).populate('accessories').lean();
 }
 function updateOne(productId, productData){
-    return Cube.updateOne({_id: productId}, productData)
- }
- function deleteOne(productId){
-     return Cube.deleteOne({_id: productId})
- }
+   return Cube.updateOne({_id: productId}, productData)
+}
+function deleteOne(productId){
+    return Cube.deleteOne({_id: productId})
+}
 module.exports = {
     getAll,
     getOne,

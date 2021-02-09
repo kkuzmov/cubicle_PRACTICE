@@ -1,10 +1,9 @@
-//CHECKED!!!
 const { Router } = require('express');
 
 const router = Router();
 
 router.get('/', (req, res) => {
-    res.render('home')
+    res.redirect('/products');
 })
 router.get('/about', (req, res) => {
     res.render('about', {title: 'About us'});
