@@ -9,7 +9,7 @@ const { validateProduct } = require('../controllers/helpers/productHelper');
 const accessoryService = require('../services/accessoryService');
 
 router.get('/', (req, res) => {
-  
+    
 })
 router.get('/create', (req, res) => {
     

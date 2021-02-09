@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 module.exports = (app) => {
-mongoose.connect('mongodb://localhost/cubicle', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost/practice_cubicle', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const db = mongoose.connection;
 

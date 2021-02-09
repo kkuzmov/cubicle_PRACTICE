@@ -2,7 +2,7 @@
 
 const config = {
     development: {
-        PORT: 5000,
+        PORT: 3300,
         SALT_ROUNDS: 10,
         SECRET: 'examSecrets'
     },
