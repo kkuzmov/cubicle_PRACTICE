@@ -7,11 +7,14 @@ const isGuest = require('../middlewares/isGuest');
 //ВНИМАВАЙ С PATHNAME - ПРОМЕНИ ГИ В ПАПКА VIEWS СЛЕД КАТО ГИ ПОЛУЧИШ!!!
 //ВТОРИЯТ ПАРАМЕТЪР НА .GET Е MIDDLEWARE - ВНИМАВАЙ ДАЛИ ГО ИЗПОЛЗВАШ!
 
-router.get('/login', isGuest, (req, res) => {
+router.get('/login',  (req, res) => {
+    console.log(req.user)
+
     res.render('login');
 })
 router.post('/login', isGuest, async (req, res)=>{
     const {username, password} = req.body;
+
     try {
         let token = await authService.login({username, password})
 
@@ -27,11 +30,30 @@ router.get('/register', isGuest, (req, res) => {
 })
 
 router.post('/register',isGuest, async (req, res) => {
-    const {username, password} = req.body;
-    authService.register({username, password})
-        .then(response => res.redirect('/products'))
+    const {username, password, repeatPassword} = req.body;
+    
+    if(password !== repeatPassword){
+        let error = {message: 'Passwords do not match!'}
+        res.render('register', {error})
+        return
+    }
+
+    // authService.register({username, password})
+    //     .then(response => res.redirect('/auth/login'))
+    //     .catch(err => res.render('register'), {err.errors});
+
+    try {
+        let user = await authService.register({username, password});
+         res.redirect('/auth/login')
+     } catch (err) {
+         let error = err.errors;
+         console.log(error);
+         res.render('register', {error})
+         return;
+     }
 })
 router.get('/logout', isAuthenticated, (req, res)=>{
-    
+    res.clearCookie(cookieName);
+    res.redirect('/products');
 })
 module.exports = router;

@@ -7,7 +7,10 @@ const {SALT_ROUNDS} = require('../config/config');
 
 async function register({username, password}) {
     let salt = await bcrypt.genSalt(SALT_ROUNDS);
-    let hash = await bcrypt.hash(password, salt);   
+    let hash = await bcrypt.hash(password, salt);
+    // check if username exists in DB   
+    let check = await User.findOne({username})
+    if(check) throw {message: 'Username already exists!'};
     const user = new User({username,password: hash}); 
     return await user.save();
 }

@@ -23,6 +23,9 @@
                 <li><a href="/auth/login">Login</a></li>
                 <li><a href="/auth/register">Register</a></li>
                 {{!-- {{/if}} --}}
+                {{#if isAuthenticated}}
+                <li style="color:whitesmoke; font-size: 26px; border: 3px solid red">Hello, {{user.username}}</li>
+                {{/if}}
             </ul>
         </header>
     {{{ body }}}
