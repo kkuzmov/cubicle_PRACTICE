@@ -28,8 +28,11 @@ router.post('/create', validateProduct, (req, res) => {
         .catch((err)=>{res.status(500).end()})
 })
 router.get('/details/:productId', (req, res)=>{
-    let product = productService.getOneWithAccessories(req.params.productId)
-    res.render('details', {title: 'Product details', product})
+    productService.getOneWithAccessories(req.params.productId)
+        .then(product =>{
+            res.render('details', {title: 'Product details', product})
+        })
+        .catch(err => res.redirect('/no-such-product')) // - render 404 PAGE
 })
 
 
