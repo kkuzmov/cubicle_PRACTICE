@@ -34,7 +34,16 @@ router.get('/details/:productId', (req, res)=>{
         })
         .catch(err => res.redirect('/no-such-product')) // - render 404 PAGE
 })
+router.get('/:productId/attach', async(req, res)=>{
+    let product = await productService.getOne(req.params.productId);
 
+    let accessories = await accessoryService.getAllWithout(product.accessories);
+    res.render('attachAccessory', {title: 'Attach accessories', product, accessories})
+})
+router.post('/:productId/attach', async (req, res)=>{
+  await productService.attachAccessory(req.params.productId, req.body.accessory)
+    res.redirect(`/products/details/${req.params.productId}`);
+})
 
 // CONTROLLER ИЗПОЛЗВА ФУНКЦИИТЕ, СЪЗДАДЕНИ В PRODUCTSERVICE ЗА СЪЗДАВАНЕ ИЛИ ИЗВИКВАНЕ НА ВСИЧКИ ПРОДУКТИ
 // ЧАСТ ОТ EXAM PACKAGE
