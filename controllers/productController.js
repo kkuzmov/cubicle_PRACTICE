@@ -1,7 +1,7 @@
 // CHANGE FILE/FOLDER NAMES
 
 const {
-    Router
+    Router, response
 } = require('express');
 const router = Router();
 const productService = require('../services/productService');
@@ -43,7 +43,7 @@ router.post('/create', validateProduct, (req, res) => {
 router.get('/details/:productId', (req, res) => {
     productService.getOneWithAccessories(req.params.productId)
         .then(product => {
-            res.render('details', {title: 'Product details',product})
+            res.render('details', {title: 'Product details', product})
         })
         .catch(err => res.redirect('/no-such-product')) // - renders 404 PAGE
 })
@@ -65,6 +65,15 @@ router.get('/:productId/edit', (req, res)=>{
     productService.getOne(req.params.productId)
         .then(product =>{
             res.render('editCubePage', product)
+        })
+})
+router.post('/:productId/edit', (req, res)=>{
+    productService.updateOne(req.params.productId, req.body)
+        .then(response =>{
+            res.redirect(`/products/details/${req.params.productId}`);
+        })
+        .catch((err)=>{
+            res.render('page-not-found')
         })
 })
 
