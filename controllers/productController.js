@@ -1,7 +1,8 @@
 // CHANGE FILE/FOLDER NAMES
 
 const {
-    Router, response
+    Router,
+    response
 } = require('express');
 const router = Router();
 const productService = require('../services/productService');
@@ -14,13 +15,13 @@ const accessoryService = require('../services/accessoryService');
 
 router.get('/', (req, res) => {
     let products = productService.getAll(req.query)
-
         .then(products => {
+            console.log(res.locals)
+
             res.render('home', {
                 title: 'Home',
                 products
             })
-            console.log(req.user)
 
         })
         .catch((err) => res.status(500).end())
@@ -40,14 +41,17 @@ router.post('/create', isAuthenticated, validateProduct, (req, res) => {
             res.status(500).end()
         })
 })
-router.get('/details/:productId',isAuthenticated, (req, res) => {
+router.get('/details/:productId', isAuthenticated, (req, res) => {
     productService.getOneWithAccessories(req.params.productId)
         .then(product => {
-            res.render('details', {title: 'Product details', product})
+            res.render('details', {
+                title: 'Product details',
+                product
+            })
         })
         .catch(err => res.redirect('/no-such-product')) // - renders 404 PAGE
 })
-router.get('/:productId/attach',isAuthenticated, async (req, res) => {
+router.get('/:productId/attach', isAuthenticated, async (req, res) => {
     let product = await productService.getOne(req.params.productId);
 
     let accessories = await accessoryService.getAllWithout(product.accessories);
@@ -57,42 +61,46 @@ router.get('/:productId/attach',isAuthenticated, async (req, res) => {
         accessories
     })
 })
-router.post('/:productId/attach',isAuthenticated, async (req, res) => {
+router.post('/:productId/attach', isAuthenticated, async (req, res) => {
     await productService.attachAccessory(req.params.productId, req.body.accessory)
     res.redirect(`/products/details/${req.params.productId}`);
 })
-router.get('/:productId/edit',isAuthenticated, (req, res)=>{
+router.get('/:productId/edit', isAuthenticated, (req, res) => {
     productService.getOne(req.params.productId)
-        .then(product =>{
+        .then(product => {
             res.render('editCubePage', product)
         })
 })
-router.post('/:productId/edit',isAuthenticated, validateProduct, (req, res)=>{
+router.post('/:productId/edit', isAuthenticated, validateProduct, (req, res) => {
     productService.updateOne(req.params.productId, req.body)
-        .then(response =>{
+        .then(response => {
             res.redirect(`/products/details/${req.params.productId}`);
         })
-        .catch((err)=>{
+        .catch((err) => {
             res.redirect('page-not-found')
         })
 })
-router.get('/:productId/delete',isAuthenticated, (req, res)=>{
+router.get('/:productId/delete', isAuthenticated, (req, res) => {
     let product = productService.getOne(req.params.productId)
-        .then(response =>{
+        .then(response => {
             res.render('deleteCubePage', response);
         })
-        .catch(err=> res.redirect('page-not-found'))
+        .catch(err => res.redirect('page-not-found'))
 })
-router.post('/:productId/delete',isAuthenticated, (req, res)=>{
+router.post('/:productId/delete', isAuthenticated, (req, res) => {
     productService.getOne(req.params.productId)
         .then(product => {
-            if(product.creator != req.user._id){
+            if (product.creator != req.user._id) {
                 return res.redirect('/products');
             }
-           return productService.deleteOne(req.params.productId)
+            return productService.deleteOne(req.params.productId)
         })
-        .then(response =>{res.redirect('/products')})
-        .catch((err)=>{res.redirect('page-not-found')})
+        .then(response => {
+            res.redirect('/products')
+        })
+        .catch((err) => {
+            res.redirect('page-not-found')
+        })
 })
 // CONTROLLER ИЗПОЛЗВА ФУНКЦИИТЕ, СЪЗДАДЕНИ В PRODUCTSERVICE ЗА СЪЗДАВАНЕ ИЛИ ИЗВИКВАНЕ НА ВСИЧКИ ПРОДУКТИ
 // ЧАСТ ОТ EXAM PACKAGE
